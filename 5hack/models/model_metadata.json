@@ -1,0 +1,61 @@
+{
+  "feature_columns": [
+    "Temperature",
+    "RH",
+    "Ws",
+    "Rain",
+    "FFMC",
+    "DMC",
+    "DC",
+    "ISI",
+    "BUI",
+    "FWI"
+  ],
+  "metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "confusion_matrix": [
+      [
+        13,
+        0
+      ],
+      [
+        0,
+        12
+      ]
+    ],
+    "feature_importance": {
+      "Temperature": 0.05441858262740093,
+      "RH": 0.0831050262512881,
+      "Ws": 0.016554530044748907,
+      "Rain": 0.0,
+      "FFMC": 0.23163396724793295,
+      "DMC": 0.09773907609795814,
+      "DC": 0.002373234562900369,
+      "ISI": 0.27926621326491097,
+      "BUI": 0.0875882697884501,
+      "FWI": 0.14732110011440955
+    }
+  },
+  "risk_thresholds": {
+    "low": {
+      "min": 0,
+      "max": 33
+    },
+    "medium": {
+      "min": 34,
+      "max": 66
+    },
+    "high": {
+      "min": 67,
+      "max": 100
+    }
+  },
+  "model_type": "RandomForestClassifier",
+  "model_params": {
+    "n_estimators": 100,
+    "max_depth": 10
+  }
+}

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Grid-Based Forest Fire Early Warning and Risk Prediction System using Machine Learning and Real-Time Satellite Data">
+    <title>🔥 Forest Fire Early Warning System</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🔥</span>
+                <div class="logo-text">
+                    <h1>Forest Fire Early Warning</h1>
+                    <p>Grid-Based Risk Prediction System</p>
+                </div>
+            </div>
+            <div class="header-controls">
+                <div class="region-selector">
+                    <label for="region-select">Select Forest Region:</label>
+                    <select id="region-select">
+                        <option value="">-- Choose Region --</option>
+                    </select>
+                </div>
+                <button id="predict-btn" class="btn btn-primary" disabled>
+                    <span class="btn-icon">🎯</span>
+                    Predict Risk
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content (Scrollable) -->
+        <main class="main-content scroll-container">
+
+            <!-- SECTION 1: HERO MAP (Above the Fold) -->
+            <section id="section-hero" class="section hero-section">
+                <div class="map-wrapper">
+                    <div id="map" class="hero-map"></div>
+
+                    <!-- Floating Quick Stats Overlay -->
+                    <div class="hero-overlay" id="hero-stats" style="display: none;">
+                        <div class="hero-stat-item">
+                            <span class="label">Status</span>
+                            <span class="value status-text">--</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat-item">
+                            <span class="label">Max Risk</span>
+                            <span class="value risk-text">--%</span>
+                        </div>
+                    </div>
+
+                    <div class="map-legend">
+                        <h4>Risk Level</h4>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #22c55e;"></div>
+                            <span>Low (0-33)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #eab308;"></div>
+                            <span>Medium (34-66)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ef4444;"></div>
+                            <span>High (67-100)</span>
+                        </div>
+                    </div>
+
+                    <div class="scroll-indicator">
+                        <span>Scroll for Analysis</span>
+                        <div class="arrow-down">↓</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: RISK OVERVIEW -->
+            <section id="section-overview" class="section overview-section" style="display: none;">
+                <div class="section-container">
+                    <div class="section-header">
+                        <h2>📊 Risk Overview</h2>
+                        <span class="timestamp" id="last-updated">Updated: Just now</span>
+                    </div>
+
+                    <!-- NEW: Horizontal Risk Bar Visual -->
+                    <div class="risk-bar-container">
+                        <div class="risk-bar-labels">
+                            <span>LOW</span>
+                            <span>MEDIUM</span>
+                            <span>HIGH</span>
+                        </div>
+                        <div class="risk-track">
+                            <div class="risk-gradient"></div>
+                            <div id="risk-marker" class="risk-marker">
+                                <div class="marker-line"></div>
+                                <div class="marker-label">
+                                    <span id="risk-score-display">--%</span>
+                                    <span id="risk-level-display">NORMAL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contextual Status Headline -->
+                    <div id="insight-headline" class="insight-headline">
+                        <h2>Loading insights...</h2>
+                    </div>
+
+                    <!-- Supporting Metrics -->
+                    <div class="summary-cards-row" id="summary-cards">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: WEATHER & EXPLAINABILITY -->
+            <section id="section-weather" class="section weather-section" style="display: none;">
+                <div class="section-container">
+                    <h2>🌤️ Weather & Explainability</h2>
+                    <p class="section-subtitle">Environmental drivers contributing to current fire risk</p>
+
+                    <div class="weather-grid-large" id="weather-grid">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="drivers-box">
+                        <h3>Why is the risk <span id="risk-driver-level">--</span>?</h3>
+                        <ul id="risk-drivers-list">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: INDICES & ACTION -->
+            <section id="section-action" class="section action-section" style="display: none;">
+                <div class="section-container">
+                    <h2>🔥 Fire Indices & Recommended Actions</h2>
+
+                    <div class="action-layout">
+                        <div class="indices-panel">
+                            <h3>Technical Indices (FWI System)</h3>
+                            <div class="indices-grid" id="indices-grid">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <div class="action-panel" id="action-panel">
+                            <h3>Recommended Response</h3>
+                            <div class="action-card" id="recommended-action">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: EMERGENCY ASSISTANCE (Conditional) -->
+            <section id="section-emergency" class="section emergency-section" style="display: none;">
+                <div class="section-container">
+                    <div class="emergency-header">
+                        <h2>🆘 Emergency Assistance</h2>
+                        <span class="emergency-location" id="emergency-location-label">Region: Unknown</span>
+                    </div>
+
+                    <div class="emergency-card">
+                        <div class="emergency-alert-bar" id="emergency-alert-bar">
+                            ⚠️ Risk Critical: Emergency Services May Be Required
+                        </div>
+
+                        <div class="emergency-content">
+                            <div class="emergency-number-box">
+                                <span class="label">FIRE & RESCUE</span>
+                                <div class="number-display">
+                                    <span id="emergency-number">911</span>
+                                    <button class="btn-icon-only" id="btn-copy-emergency"
+                                        title="Copy Number">📋</button>
+                                </div>
+                                <span class="sub-label">Official Emergency Line</span>
+                            </div>
+
+                            <div class="emergency-actions">
+                                <p class="action-instruction">If immediate threat to life or property exists:</p>
+                                <div class="btn-group">
+                                    <button class="btn btn-emergency" id="btn-share-location">
+                                        📍 Share My Location
+                                    </button>
+                                    <a href="#" class="btn btn-secondary" id="btn-guidelines">
+                                        📄 Evacuation Guidelines
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="emergency-disclaimer">
+                            <strong>Disclaimer:</strong> This system is for monitoring only and does not automatically
+                            dispatch services.
+                            Always call local authorities directly in an emergency.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loading-overlay" style="display: none;">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Analyzing fire risk...</p>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toast-container"></div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- App JS -->
+    <script src="app.js"></script>
+</body>
+
+</html>
