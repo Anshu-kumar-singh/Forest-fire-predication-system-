@@ -27,7 +27,5 @@ Authorities need early, understandable, and actionable risk information.
 - Provide decision support recommendations
 - Integrate emergency assistance
 
----
 
-## 🧠 System Overview
 
